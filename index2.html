@@ -79,28 +79,27 @@
             };
 
             xhr.send();
-
-            function getCurrenciesString(currencies) {
-                let ret = ""
-
-                for (var currency in currencies) {
-                    ret += `${currencies[currency].name}, `
-                }
-
-                return ret.slice(0, -2)
-            }
-
-            function getLanguagesString(languages) {
-                let ret = ""
-
-                for (var language in languages) {
-                    ret += `${languages[language]}, `
-                }
-
-                return ret.slice(0, -2)
-            }
         }
 
+        function getCurrenciesString(currencies) {
+            let ret = ""
+
+            for (var currency in currencies) {
+                ret += `${currencies[currency].name}, `
+            }
+
+            return ret.slice(0, -2)
+        }
+
+        function getLanguagesString(languages) {
+            let ret = ""
+
+            for (var language in languages) {
+                ret += `${languages[language]}, `
+            }
+
+            return ret.slice(0, -2)
+        }
     </script>
 </body>
 
