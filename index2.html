@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Fetch Posts and Display in Table (XHR)</title>
+    <title>Fetch Currencies and Display in Table (XHR)</title>
     <style>
         table {
             border-collapse: collapse;
@@ -27,7 +27,11 @@
 </head>
 
 <body>
-    <h1>Posts</h1>
+    <label for="currency">Currency: </label>
+    <input type="text" id="currency">
+    <button onclick="sendRequest()">Send</button>
+    <hr>
+    <h1>Country currencies</h1>
     <table>
         <thead>
             <tr>
@@ -40,107 +44,62 @@
         <tbody id="post-table-body">
         </tbody>
     </table>
+    <div id="table"></div>
 
     <script>
+        function sendRequest() {
+            const postTableBody = document.getElementById('post-table-body');
 
+            const xhr = new XMLHttpRequest();
+            const source = `https://restcountries.com/v3.1/currency/${document.getElementById('currency').value}`
 
+            xhr.open('GET', source, true);
 
-        const postTableBody = document.getElementById('post-table-body');
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    const currencies = JSON.parse(xhr.responseText);
 
-        const xhr = new XMLHttpRequest();
+                    currencies.forEach(currency => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                        <td>${currency.name.common}</td>
+                        <td>${getCurrenciesString(currency.currencies)}</td>
+                        <td>${getLanguagesString(currency.languages)}</td>
+                        <td><img src="${currency.flags.png}" alt="${currency.flags.alt}"></td>
+                    `;
+                        postTableBody.appendChild(row);
+                    });
+                } else {
+                    console.error('Failed to fetch data:', xhr.status, xhr.statusText);
+                }
+            };
 
-        xhr.open('GET', 'https://restcountries.com/v3.1/all?fields=currencies', true);
+            xhr.onerror = function () {
+                console.error('Network error occurred');
+            };
 
-        xhr.onload = function () {
-            if (xhr.status >= 200 && xhr.status < 300) {
-                const currencies = filterCurrency(JSON.parse(xhr.responseText));
+            xhr.send();
 
-                console.log(currencies);
-                
-                // currencies.forEach(currency => {
-                //     const row = document.createElement('tr');
-                //     row.innerHTML = `
-                //         <td>${currency.name.common}</td>
-                //         <td>${getCurrenciesString(currency.currencies)}</td>
-                //         <td>${getLanguagesString(currency.languages)}</td>
-                //         <td><img src="${currency.flags.png}" alt="${currency.flags.alt}"></td>
-                //     `;
-                //     postTableBody.appendChild(row);
-                // });
-            } else {
-                console.error('Failed to fetch data:', xhr.status, xhr.statusText);
+            function getCurrenciesString(currencies) {
+                let ret = ""
+
+                for (var currency in currencies) {
+                    ret += `${currencies[currency].name}, `
+                }
+
+                return ret.slice(0, -2)
             }
-        };
 
-                xhr.onerror = function () {
-            console.error('Network error occurred');
-        };
+            function getLanguagesString(languages) {
+                let ret = ""
 
-        xhr.send();
+                for (var language in languages) {
+                    ret += `${languages[language]}, `
+                }
 
-        function filterCurrency(currencies) {
-            console.log(currencies);
-
-            return currencies.filter(_ => {
-                // key == ILS
-                currencies = currencies.slice(0, 2)
-                for (var key in currencies) {
-                // ret += `${languages[language]}, `
-            console.log(currencies[key][currencies]);
-
+                return ret.slice(0, -2)
             }
-            })
         }
-
-// ################################################################################
-        // xhr.open('GET', 'https://restcountries.com/v3.1/currency/ils', true);
-
-        // xhr.onload = function () {
-        //     if (xhr.status >= 200 && xhr.status < 300) {
-        //         const currencies = JSON.parse(xhr.responseText);
-
-        //         // console.log(currencies);
-                
-        //         currencies.forEach(currency => {
-        //             const row = document.createElement('tr');
-        //             row.innerHTML = `
-        //                 <td>${currency.name.common}</td>
-        //                 <td>${getCurrenciesString(currency.currencies)}</td>
-        //                 <td>${getLanguagesString(currency.languages)}</td>
-        //                 <td><img src="${currency.flags.png}" alt="${currency.flags.alt}"></td>
-        //             `;
-        //             postTableBody.appendChild(row);
-        //         });
-        //     } else {
-        //         console.error('Failed to fetch data:', xhr.status, xhr.statusText);
-        //     }
-        // };
-
-        // xhr.onerror = function () {
-        //     console.error('Network error occurred');
-        // };
-
-        // xhr.send();
-
-        // function getCurrenciesString(currencies) {
-        //     let ret = ""
-
-        //     for (var currency in currencies) {
-        //         ret += `${currencies[currency].name}, `
-        //     }
-
-        //     return ret.slice(0, -2)
-        // }
-
-        // function getLanguagesString(languages) {
-        //     let ret = ""
-
-        //     for (var language in languages) {
-        //         ret += `${languages[language]}, `
-        //     }
-
-        //     return ret.slice(0, -2)
-        // }
 
     </script>
 </body>
